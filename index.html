@@ -1,0 +1,1753 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centros de Kinesiología UP</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <!-- Print Styles -->
+    <link rel="stylesheet" href="print.css" media="print">
+
+    <style>
+        :root {
+            --primary: #0767A7;
+            --primary-hover: #054c7d;
+            --bg-color: #f4f7f6;
+            --sidebar-w: 380px;
+            --text-main: #333;
+            --text-muted: #666;
+            --border-color: #e0e0e0;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            color: var(--text-main);
+        }
+
+        /* SIDEBAR */
+        #sidebar {
+            width: var(--sidebar-w);
+            background: #fff;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+            /* over map */
+        }
+
+        .header {
+            padding: 20px;
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            margin: 0 0 10px 0;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            font-family: inherit;
+            outline: none;
+        }
+
+        .search-box button {
+            padding: 10px 15px;
+            background: #fff;
+            color: var(--primary);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        .search-box button:hover {
+            background: #eef;
+        }
+
+        .current-loc {
+            font-size: 0.85rem;
+            color: #d1e8ff;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* LISTADO */
+        #results {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+        }
+
+        .clinic-card {
+            background: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: 0.2s;
+            position: relative;
+        }
+        
+        .clinic-card.selected {
+            background: #e8f5e9 !important;
+            border-left: 4px solid #4caf50 !important;
+            position: relative;
+        }
+        
+        .clinic-card.selected::after {
+            content: "✓";
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #4caf50;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .clinic-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(7, 103, 167, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .clinic-card.highlight {
+            border-left: 5px solid var(--primary);
+        }
+
+        .rank-badge {
+            display: inline-block;
+            background: #27ae60;
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 3px;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+
+        .marker-number {
+            background: transparent;
+            border: none;
+        }
+
+        .clinic-name {
+            font-weight: 700;
+            margin: 0 0 5px 0;
+            font-size: 1rem;
+        }
+
+        .clinic-address {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .clinic-distance {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: #e8f3fa;
+            color: var(--primary);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .clinic-card.favorite {
+            background: #fffde7 !important;
+            border-left: 4px solid #fbc02d;
+        }
+
+        .clinic-card.selected {
+            background: #f5f5f5 !important;
+            border-left: 4px solid #9e9e9e !important;
+            opacity: 0.7;
+        }
+
+        .clinic-card.selected .clinic-name,
+        .clinic-card.selected .clinic-address,
+        .clinic-card.selected .clinic-distance {
+            color: #999 !important;
+            text-decoration: line-through;
+        }
+
+        .clinic-card.selected::after {
+            display: none;
+        }
+
+        .clinic-card.active {
+            background: #e3f2fd !important;
+            border: 2px solid #1976d2 !important;
+            box-shadow: 0 0 0 4px rgba(25, 118, 210, 0.2);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .action-btn {
+            padding: 4px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: 0.2s;
+            font-weight: 600;
+        }
+
+        .action-btn.star {
+            background: #fff8e1;
+            color: #f57f17;
+        }
+
+        .action-btn.star.active {
+            background: #fbc02d;
+            color: white;
+        }
+
+        .action-btn.check {
+            background: #e8f5e9;
+            color: #388e3c;
+        }
+
+        .action-btn.check.active {
+            background: #43a047;
+            color: white;
+            text-decoration: line-through;
+        }
+
+
+        /* ── Favoritos en mapa ── */
+        #favMapBtn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            width: 100%;
+            margin-top: 8px;
+            padding: 8px 12px;
+            background: #fffbea;
+            color: #b7791f;
+            border: 1.5px solid #f6c946;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        #favMapBtn:hover {
+            background: #fef3c7;
+        }
+
+        #favMapBtn.active {
+            background: #f6c946;
+            color: #7c4e00;
+            border-color: #d97706;
+        }
+
+        #exportPdfBtn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            width: 100%;
+            margin-top: 6px;
+            padding: 8px 12px;
+            background: #eff6ff;
+            color: #1d4ed8;
+            border: 1.5px solid #93c5fd;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        #exportPdfBtn:hover {
+            background: #dbeafe;
+        }
+
+        #exportListPdfBtn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            width: 100%;
+            margin-top: 6px;
+            padding: 8px 12px;
+            background: #ecfdf5;
+            color: #047857;
+            border: 1.5px solid #6ee7b7;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        #exportListPdfBtn:hover {
+            background: #d1fae5;
+        }
+
+        /* ── Print / PDF ── */
+        @media print {
+            body {
+                display: block !important;
+                height: auto !important;
+                overflow: visible !important;
+                background: white !important;
+            }
+
+            #sidebar {
+                width: 100% !important;
+                box-shadow: none !important;
+                height: auto !important;
+                overflow: visible !important;
+            }
+
+            #map,
+            .header,
+            .filter-bar,
+            .loader,
+            #favMapBtn,
+            #exportPdfBtn,
+            .action-buttons,
+            .rank-badge {
+                display: none !important;
+            }
+
+            #results {
+                overflow: visible !important;
+                padding: 15px !important;
+            }
+
+            /* Show Print Header */
+            #print-header {
+                display: block !important;
+                margin-bottom: 20px;
+                border-bottom: 2px solid #0767A7;
+            }
+
+            /* Make cards look EXACTLY like screen */
+            .clinic-card {
+                break-inside: avoid;
+                page-break-inside: avoid;
+                background: #fff !important;
+                border: 1px solid #e0e0e0 !important;
+                border-radius: 8px !important;
+                padding: 15px !important;
+                margin-bottom: 15px !important;
+                box-shadow: none !important;
+                cursor: default !important;
+            }
+
+            .clinic-card:hover {
+                transform: none !important;
+                border-color: #e0e0e0 !important;
+            }
+
+            /* Favorito style - exact match */
+            .clinic-card.favorite {
+                background: #fffde7 !important;
+                border-left: 4px solid #fbc02d !important;
+            }
+
+            .clinic-card.selected {
+                background: #e0e0e0 !important;
+                border-left: 4px solid #9e9e9e !important;
+            }
+
+            /* Name and Address */
+            .clinic-name {
+                font-weight: 700;
+                margin: 0 0 5px 0;
+                font-size: 1rem;
+                color: #333;
+            }
+
+            .clinic-address {
+                font-size: 0.85rem;
+                color: #666;
+                margin-bottom: 10px;
+            }
+
+            .clinic-distance {
+                display: inline-flex;
+                align-items: center;
+                gap: 5px;
+                background: #e8f3fa;
+                color: #0767A7;
+                padding: 4px 8px;
+                border-radius: 4px;
+                font-size: 0.85rem;
+                font-weight: 600;
+            }
+
+            /* Phone/Telefono - make sure it's visible */
+            .clinic-card a[href^="tel:"] {
+                display: inline-flex !important;
+                align-items: center;
+                gap: 5px;
+                background: #f0f0f0;
+                color: #555 !important;
+                padding: 4px 9px;
+                border-radius: 4px;
+                font-size: 12px;
+                font-weight: 600;
+                text-decoration: none;
+            }
+
+            .clinic-card a[href^="https://wa.me"] {
+                display: inline-flex !important;
+                align-items: center;
+                gap: 5px;
+                background: #25D366;
+                color: white !important;
+                padding: 4px 9px;
+                border-radius: 4px;
+                font-size: 12px;
+                font-weight: 600;
+                text-decoration: none;
+            }
+
+            /* Badges for Type (Centro/Profesional) - Visible in Print */
+            .clinic-card > span[style*="background"] {
+                display: inline-block !important;
+                margin-top: 6px;
+                font-size: 11px;
+                padding: 2px 8px;
+                border-radius: 6px;
+                font-weight: bold;
+            }
+
+            /* Force show these specific badge colors */
+            .clinic-card > span[style*="background: rgb(209, 236, 241)"] { background-color: #d1ecf1 !important; color: #0c5460; }
+            .clinic-card > span[style*="background: rgb(255, 243, 205)"] { background-color: #fff3cd !important; color: #856404; }
+            .clinic-card > span[style*="background: rgb(226, 227, 229)"] { background-color: #e2e3e5 !important; color: #383d41; }
+        }
+
+        #print-header {
+            display: none;
+            padding: 16px 0 8px;
+            border-bottom: 2px solid #0767A7;
+            margin-bottom: 12px;
+        }
+
+        #print-header h2 {
+            margin: 0;
+            color: #0767A7;
+            font-size: 1.1rem;
+        }
+
+        #print-header p {
+            margin: 4px 0 0;
+            color: #666;
+            font-size: 12px;
+        }
+
+        /* MAPA */
+        #map {
+            flex: 1;
+            height: 100%;
+        }
+
+        /* Loader */
+        .loader {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="sidebar">
+        <div class="header">
+            <h1>Buscar Kinesiología UP</h1>
+            <div class="search-box">
+                <input type="text" id="addressInput" value="Mendoza 563, Ezpeleta, Quilmes, Argentina"
+                    placeholder="Dirección o nombre de prestador..." oninput="filterBySearchInput()">
+                <button onclick="getCurrentLocation()" title="Mi ubicación" style="background:#27ae60;"><i
+                        class="fa-solid fa-location-crosshairs"></i></button>
+                <button onclick="searchAddress()"><i class="fa-solid fa-magnifying-glass"></i></button>
+            </div>
+            <div class="current-loc" id="currentLocText">
+                <i class="fa-solid fa-location-dot"></i> Calculando ubicación...
+            </div>
+        </div>
+        <div class="filter-bar" style="padding:10px 15px;background:#f8f8f8;border-bottom:1px solid #e0e0e0;">
+            <select id="localidadFilter" onchange="filterByLocalidad()"
+                style="width:100%;padding:8px;border:1px solid #ddd;border-radius:4px;font-family:inherit;">
+                <option value="">Todas las localidades</option>
+            </select>
+            <div style="margin-top:10px;display:flex;gap:12px;flex-wrap:wrap;">
+                <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;">
+                    <input type="checkbox" id="filterCentro" onchange="filterByTipo()" checked>
+                    <span style="background:#d1ecf1;padding:2px 6px;border-radius:4px;font-size:11px;">🏥 Centro</span>
+                </label>
+                <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;">
+                    <input type="checkbox" id="filterCompartido" onchange="filterByTipo()" checked>
+                    <span style="background:#fff3cd;padding:2px 6px;border-radius:4px;font-size:11px;">🏥
+                        Compartido</span>
+                </label>
+                <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;">
+                    <input type="checkbox" id="filterProfesional" onchange="filterByTipo()" checked>
+                    <span style="background:#e2e3e5;padding:2px 6px;border-radius:4px;font-size:11px;">👤
+                        Profesional</span>
+                </label>
+            </div>
+            <div
+                style="margin-top:8px;border-top:1px solid #e0e0e0;padding-top:8px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+                <span
+                    style="font-size:11px;color:#888;font-weight:600;text-transform:uppercase;letter-spacing:.5px;">Contacto</span>
+                <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;">
+                    <input type="checkbox" id="filterWhatsapp" onchange="filterByTipo()" checked>
+                    <span
+                        style="background:#dcf8c6;color:#128C7E;padding:2px 7px;border-radius:4px;font-size:11px;font-weight:600;"><i
+                            class="fa-brands fa-whatsapp"></i> WhatsApp</span>
+                </label>
+                <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;">
+                    <input type="checkbox" id="filterFijo" onchange="filterByTipo()" checked>
+                    <span
+                        style="background:#f0f0f0;color:#555;padding:2px 7px;border-radius:4px;font-size:11px;font-weight:600;"><i
+                            class="fa-solid fa-phone"></i> Fijo</span>
+                </label>
+            </div>
+        </div>
+        <div style="padding:0 15px 10px;background:#f8f8f8;border-bottom:1px solid #e0e0e0;">
+            <button id="favMapBtn" onclick="toggleFavMap()">
+                <i class="fa-solid fa-star"></i>
+                <span id="favMapBtnText">Ver favoritos en mapa</span>
+                <span id="favMapCount"
+                    style="margin-left:auto;background:#f6c946;color:#7c4e00;padding:1px 7px;border-radius:10px;font-size:11px;"></span>
+            </button>
+            <button id="exportPdfBtn" onclick="exportPDF()">
+                <i class="fa-solid fa-file-pdf"></i> Exportar favoritos a PDF
+            </button>
+            <button id="exportListPdfBtn" onclick="exportListPDF()">
+                <i class="fa-solid fa-list"></i> Exportar listado a PDF
+            </button>
+        </div>
+        <div class="loader" id="loader">
+            <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
+            <p>Buscando en mapa...</p>
+        </div>
+        <div id="results">
+            <div id="print-header">
+                <h2><i class="fa-solid fa-star" style="color:#f6c946;"></i> Mis Favoritos — Kinesiología UP</h2>
+                <p id="print-date"></p>
+            </div>
+            <!-- Items generados por JS -->
+        </div>
+    </div>
+
+    <div id="map"></div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+
+    <script>
+        let profesionalesData = [];
+        let map;
+        let markersGroup;
+        let userMarker;
+        let userLatLng = null;
+        let routingLines = [];
+
+        let filteredData = [];
+        let profesionalTypes = {};
+        window.centrosData = { localidades: [] };
+
+        const localidadesCoords = {
+            'Berazategui': { lat: -34.7217, lng: -58.2564 },
+            'Quilmes': { lat: -34.7295, lng: -58.2541 },
+            'Ezpeleta': { lat: -34.7384, lng: -58.2286 },
+            'Avellaneda': { lat: -34.6806, lng: -58.3636 },
+            'Alte. Brown': { lat: -34.7942, lng: -58.3822 },
+            'Lomas de Zamora': { lat: -34.7657, lng: -58.4087 },
+            'Lanús': { lat: -34.7032, lng: -58.3947 },
+            'Florencio Varela': { lat: -34.8243, lng: -58.2696 },
+            'San Vicente': { lat: -35.0337, lng: -58.3984 },
+            'Presidente Perón': { lat: -34.9106, lng: -58.3208 }
+        };
+
+        function findLocalidadCoords(query) {
+            const q = query.toLowerCase();
+            for (const [nombre, coords] of Object.entries(localidadesCoords)) {
+                if (q.includes(nombre.toLowerCase())) {
+                    return { nombre, ...coords };
+                }
+            }
+            return null;
+        }
+
+        const NOMINATIMHeaders = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Accept': 'application/json',
+            'Accept-Language': 'es-ES,es;q=0.9'
+        };
+
+        async function geocodeWithRetry(url, retries = 2) {
+            for (let i = 0; i < retries; i++) {
+                try {
+                    // console.log('Fetching:', url);
+                    if (i > 0) await new Promise(r => setTimeout(r, 1000));
+                    const res = await fetch(url, {
+                        headers: NOMINATIMHeaders
+                    });
+                    console.log('Status:', res.status);
+                    if (res.ok) {
+                        const data = await res.json();
+                        console.log('Geocode data length:', data.length);
+                        return data;
+                    }
+                } catch (e) {
+                    console.error('Fetch error:', e);
+                    await new Promise(r => setTimeout(r, 2000));
+                }
+            }
+            return [];
+        }
+
+        async function loadData() {
+            try {
+                const res = await fetch('centros.json');
+                const data = await res.json();
+
+                window.centrosData = data;
+
+                const cacheKey = 'kine_prof_coords';
+                const cachedCoords = localStorage.getItem(cacheKey);
+                const coordCache = cachedCoords ? JSON.parse(cachedCoords) : {};
+
+                profesionalesData = data.localidades.flatMap(loc =>
+                    loc.profesionales.map(prof => ({
+                        ...prof,
+                        localidad: loc.nombre,
+                        fullAddress: `${prof.direccion}, ${loc.nombre}, Buenos Aires, Argentina`,
+                        lat: prof.lat || coordCache[prof.fullAddress]?.lat,
+                        lng: prof.lng || coordCache[prof.fullAddress]?.lng
+                    }))
+                );
+
+                const select = document.getElementById('localidadFilter');
+                data.localidades.forEach(loc => {
+                    const opt = document.createElement('option');
+                    opt.value = loc.nombre;
+                    opt.textContent = loc.nombre;
+                    select.appendChild(opt);
+                });
+
+                filteredData = [...profesionalesData];
+
+                renderList();
+                updateFavCount();
+                initMap();
+
+                const defaultAddress = document.getElementById('addressInput').value;
+                initDefaultLocation(defaultAddress);
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        function getTipoGlobal(nombre, direccion, telefono) {
+            const palabras = (nombre || "").trim().split(" ");
+            if (palabras.length === 1) {
+                return "centro";
+            }
+            const dirKey = (direccion || "").toLowerCase().trim();
+            const telKey = (telefono || "").toLowerCase().trim();
+            const dirCount = Object.values(profesionalesData).filter(p => (p.direccion || "").toLowerCase().trim() === dirKey).length;
+            const telCount = Object.values(profesionalesData).filter(p => (p.telefono || "").toLowerCase().trim() === telKey).length;
+            if (dirCount > 1 || telCount > 1) {
+                return "compartido";
+            }
+            return "profesional";
+        }
+
+        function calculateTypes() {
+            profesionalTypes = {};
+            profesionalesData.forEach(p => {
+                profesionalTypes[p.direccion] = getTipoGlobal(p.nombre, p.direccion, p.telefono);
+            });
+        }
+
+        function applyBadges() {
+            calculateTypes();
+
+            function crearBadge(texto, tipo) {
+                const span = document.createElement("span");
+                span.textContent = texto;
+                span.style.display = "inline-block";
+                span.style.marginTop = "6px";
+                span.style.padding = "2px 8px";
+                span.style.fontSize = "11px";
+                span.style.borderRadius = "6px";
+                span.style.fontWeight = "bold";
+                if (tipo === "centro") span.style.background = "#d1ecf1";
+                if (tipo === "compartido") span.style.background = "#fff3cd";
+                if (tipo === "profesional") span.style.background = "#e2e3e5";
+                return span;
+            }
+
+            document.querySelectorAll(".clinic-card").forEach(card => {
+                const nombre = card.querySelector(".clinic-name")?.innerText || "";
+                const direccionFull = card.querySelector(".clinic-address")?.innerText || "";
+                const direccion = direccionFull.split(",")[0].replace("📍", "").trim();
+                const buscarProf = profesionalesData.find(p => p.direccion === direccion || (p.direccion || "").includes(direccion));
+                const tipo = buscarProf ? (profesionalTypes[buscarProf.direccion] || 'profesional') : 'profesional';
+                const label = tipo === 'centro' ? '🏥 Centro' : tipo === 'compartido' ? '🏥 Centro compartido' : '👤 Profesional';
+                const badge = crearBadge(label, tipo);
+                card.appendChild(badge);
+            });
+
+            const observer = new MutationObserver(() => {
+                document.querySelectorAll(".leaflet-popup-content").forEach(popup => {
+                    if (popup.dataset.etiquetado) return;
+                    const nombre = popup.querySelector("h4")?.innerText || "";
+                    const direccionFull = popup.innerText || "";
+                    const matchDir = direccionFull.match(/📍 (.*?)(\n|$)/);
+                    const direccion = matchDir ? matchDir[1].split(",")[0] : "";
+                    const buscarProf = profesionalesData.find(p => p.direccion === direccion || (p.direccion || "").includes(direccion));
+                    const tipo = buscarProf ? (profesionalTypes[buscarProf.direccion] || 'profesional') : 'profesional';
+                    const label = tipo === 'centro' ? '🏥 Centro' : tipo === 'compartido' ? '🏥 Centro compartido' : '👤 Profesional';
+                    const badge = crearBadge(label, tipo);
+                    popup.appendChild(badge);
+                    popup.dataset.etiquetado = "true";
+                });
+            });
+            observer.observe(document.body, { childList: true, subtree: true });
+        }
+
+        async function initDefaultLocation(address) {
+            try {
+                let searchQuery = address;
+                if (!address.toLowerCase().includes('argentina')) {
+                    if (!address.toLowerCase().includes('buenos aires')) { searchQuery = address + ', Buenos Aires, Argentina'; } else { searchQuery = address + ', Argentina'; }
+                }
+
+                let data = await geocodeWithRetry(`https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&q=${encodeURIComponent(searchQuery)}&countrycodes=ar&limit=1`);
+
+                if (data.length > 0) {
+                    userLatLng = L.latLng(parseFloat(data[0].lat), parseFloat(data[0].lon));
+                    document.getElementById('currentLocText').innerHTML = `<i class="fa-solid fa-location-dot"></i> ${data[0].display_name.split(',')[0]}`;
+                    setTimeout(() => recalculateDistances(), 500);
+                }
+            } catch (e) {
+                console.error('Error geocodificando dirección inicial:', e);
+            }
+        }
+
+        function getCurrentLocation() {
+            if (!navigator.geolocation) {
+                alert('Tu navegador no soporta geolocalización');
+                return;
+            }
+            document.getElementById('loader').style.display = 'block';
+            document.getElementById('currentLocText').innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Obteniendo ubicación...';
+
+            navigator.geolocation.getCurrentPosition(
+                async (position) => {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+                    userLatLng = L.latLng(lat, lon);
+
+                    document.getElementById('addressInput').value = `${lat.toFixed(5)}, ${lon.toFixed(5)}`;
+
+                    try {
+                        const reverseData = await geocodeWithRetry(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&addressdetails=1`);
+                        if (reverseData && reverseData.display_name) {
+                            const shortAddr = reverseData.display_name.split(',').slice(0, 3).join(', ');
+                            document.getElementById('currentLocText').innerHTML = `<i class="fa-solid fa-location-dot"></i> ${shortAddr}`;
+                            document.getElementById('addressInput').value = shortAddr;
+                        } else {
+                            document.getElementById('currentLocText').innerHTML = `<i class="fa-solid fa-location-dot"></i> Tu ubicación`;
+                        }
+                    } catch (err) {
+                        document.getElementById('currentLocText').innerHTML = `<i class="fa-solid fa-location-dot"></i> Tu ubicación`;
+                    }
+
+                    if (map) {
+                        map.setView([lat, lon], 14);
+                        if (userMarker) map.removeLayer(userMarker);
+                        const userIcon = L.divIcon({
+                            html: '<i class="fa-solid fa-street-view fa-2x" style="color:#e74c3c;"></i>',
+                            className: 'user-marker-icon',
+                            iconSize: [30, 30],
+                            iconAnchor: [15, 15]
+                        });
+                        userMarker = L.marker(userLatLng, { icon: userIcon }).addTo(map).bindPopup('<b>Tu ubicación</b>');
+                    }
+
+                    document.getElementById('loader').style.display = 'none';
+                    recalculateDistances();
+                },
+                (error) => {
+                    document.getElementById('loader').style.display = 'none';
+                    let msg = 'Error obteniendo ubicación';
+                    if (error.code === 1) msg = 'Permiso de ubicación denegado';
+                    else if (error.code === 2) msg = 'Ubicación no disponible';
+                    else if (error.code === 3) msg = 'Tiempo de búsqueda agotado';
+                    document.getElementById('currentLocText').innerHTML = `<i class="fa-solid fa-circle-xmark"></i> ${msg}`;
+                    alert(msg);
+                },
+                { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+            );
+        }
+
+        function initMap() {
+            map = L.map('map').setView(userLatLng ? [userLatLng.lat, userLatLng.lng] : [-34.730, -58.254], 13);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; OpenStreetMap &copy; CARTO'
+            }).addTo(map);
+
+            markersGroup = L.layerGroup().addTo(map);
+
+            map.on('click', async function (e) {
+                userLatLng = L.latLng(e.latlng.lat, e.latlng.lng);
+                document.getElementById('loader').style.display = 'block';
+
+                try {
+                    const reverseData = await geocodeWithRetry(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${e.latlng.lat}&lon=${e.latlng.lng}&addressdetails=1`);
+                    if (reverseData && reverseData.display_name) {
+                        const shortAddr = reverseData.display_name.split(',').slice(0, 3).join(', ');
+                        document.getElementById('addressInput').value = shortAddr;
+                        document.getElementById('currentLocText').innerHTML = `<i class="fa-solid fa-location-dot"></i> ${reverseData.address?.road || 'Ubicación seleccionada'}`;
+                    } else {
+                        document.getElementById('currentLocText').innerHTML = `<i class="fa-solid fa-location-dot"></i> Ubicación manual`;
+                    }
+                } catch (err) {
+                    document.getElementById('currentLocText').innerHTML = `<i class="fa-solid fa-location-dot"></i> Ubicación manual`;
+                }
+
+                document.getElementById('loader').style.display = 'none';
+                map.flyTo([userLatLng.lat, userLatLng.lng], 14, { duration: 1 });
+                recalculateDistances();
+
+                if (filteredData.length > 0 && filteredData[0].lat && filteredData[0].lng) {
+                    routingLines.forEach(l => map.removeLayer(l));
+                    routingLines = [];
+                    const line = L.polyline([userLatLng, [filteredData[0].lat, filteredData[0].lng]], {
+                        color: '#27ae60', weight: 3, opacity: 0.7, dashArray: '5, 10'
+                    }).addTo(map);
+                    routingLines.push(line);
+                }
+            });
+
+            if (!userLatLng) {
+                searchAddress();
+            } else {
+                recalculateDistances();
+            }
+        }
+
+        async function searchAddress() {
+            const query = document.getElementById('addressInput').value.trim();
+            const locText = document.getElementById('currentLocText');
+
+            if (!query) return;
+
+            if (['mi ubicacion', 'mi ubicación', 'aquí', 'aqui'].includes(query.toLowerCase())) {
+                getCurrentLocation();
+                return;
+            }
+
+            // Buscar por nombre de profesional primero (solo si ya se cargaron los datos)
+            const searchType = query.toLowerCase().includes(',') || /\d/.test(query) ? 'direccion' : 'nombre';
+            
+            if (searchType === 'nombre' && profesionalesData.length > 0) {
+                // Buscar en los datos de profesionales
+                const found = profesionalesData.find(p => 
+                    p.nombre.toLowerCase().includes(query.toLowerCase())
+                );
+                
+                if (found) {
+                    // Encontrado por nombre - centrar mapa ahí sin cambiar referencia de distancia
+                    if (found.lat && found.lng) {
+                        const profLatLng = L.latLng(found.lat, found.lng);
+                        locText.innerHTML = `<i class="fa-solid fa-location-dot"></i> ${found.direccion}, ${found.localidad}`;
+                        
+                        if (userMarker) map.removeLayer(userMarker);
+                        const userIcon = L.divIcon({
+                            html: '<i class="fa-solid fa-street-view fa-2x" style="color:#e74c3c;"></i>',
+                            className: 'user-icon',
+                            iconSize: [30, 30],
+                            iconAnchor: [15, 30]
+                        });
+                        userMarker = L.marker(profLatLng, { icon: userIcon }).addTo(map).bindPopup(`<b>${found.nombre}</b><br>${found.direccion}`);
+                        
+                        map.flyTo(profLatLng, 16, { duration: 1.5 });
+                        
+                        // Solo renderizar la lista sin recalcular distancias desde mi ubicación
+                        renderList();
+                        return;
+                    }
+                }
+            }
+
+            // Si no es por nombre o no se encontró, buscar como dirección
+            document.getElementById('loader').style.display = 'block';
+            locText.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Buscando...';
+
+            try {
+                // Estrategia 1: query enriquecido con Provincia Buenos Aires
+                let searchQuery = query;
+                if (!query.toLowerCase().includes('argentina')) {
+                    if (!query.toLowerCase().includes('buenos aires')) {
+                        searchQuery = query + ', Buenos Aires, Argentina';
+                    } else {
+                        searchQuery = query + ', Argentina';
+                    }
+                }
+
+                let data = await geocodeWithRetry(
+                    `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&q=${encodeURIComponent(searchQuery)}&countrycodes=ar&limit=5`
+                );
+
+                // Estrategia 2: solo el primer fragmento + provincia
+                if (data.length === 0) {
+                    const parts = query.split(',');
+                    const street = parts[0].trim();
+                    const city = parts[1] ? parts[1].trim() : '';
+                    const fallback = city
+                        ? `${street}, ${city}, Buenos Aires, Argentina`
+                        : `${street}, Buenos Aires, Argentina`;
+                    data = await geocodeWithRetry(
+                        `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&q=${encodeURIComponent(fallback)}&countrycodes=ar&limit=5`
+                    );
+                }
+
+                // Estrategia 3: solo calle sin número + localidad
+                if (data.length === 0) {
+                    const streetNoNum = query.split(',')[0].replace(/\d+/g, '').trim();
+                    const city = query.split(',')[1] ? query.split(',')[1].trim() : '';
+                    const fallback2 = city
+                        ? `${streetNoNum}, ${city}, Buenos Aires, Argentina`
+                        : `${streetNoNum}, Buenos Aires, Argentina`;
+                    data = await geocodeWithRetry(
+                        `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&q=${encodeURIComponent(fallback2)}&countrycodes=ar&limit=5`
+                    );
+                }
+
+                if (data.length > 0) {
+                    const lat = parseFloat(data[0].lat);
+                    const lon = parseFloat(data[0].lon);
+                    userLatLng = L.latLng(lat, lon);
+
+                    // Mostrar dirección legible
+                    const addr = data[0].address;
+                    const displayParts = [
+                        addr?.road || addr?.pedestrian,
+                        addr?.house_number,
+                        addr?.city || addr?.town || addr?.village || addr?.municipality
+                    ].filter(Boolean);
+                    const displayAddr = displayParts.length > 0 ? displayParts.join(' ') : data[0].display_name.split(',').slice(0, 2).join(',');
+                    locText.innerHTML = `<i class="fa-solid fa-location-dot"></i> ${displayAddr}`;
+
+                    if (userMarker) map.removeLayer(userMarker);
+                    const userIcon = L.divIcon({
+                        html: '<i class="fa-solid fa-street-view fa-2x" style="color:#e74c3c;"></i>',
+                        className: 'user-icon',
+                        iconSize: [30, 30],
+                        iconAnchor: [15, 30]
+                    });
+                    userMarker = L.marker(userLatLng, { icon: userIcon }).addTo(map).bindPopup('<b>Tu ubicación</b>');
+                    recalculateDistances();
+                } else {
+                    // Fallback: coordenadas predefinidas de localidad
+                    const localData = findLocalidadCoords(query);
+                    if (localData) {
+                        userLatLng = L.latLng(localData.lat, localData.lng);
+                        locText.innerHTML = `<i class="fa-solid fa-location-dot"></i> ${localData.nombre}`;
+                        if (userMarker) map.removeLayer(userMarker);
+                        const userIcon = L.divIcon({
+                            html: '<i class="fa-solid fa-street-view fa-2x" style="color:#e74c3c;"></i>',
+                            className: 'user-icon',
+                            iconSize: [30, 30],
+                            iconAnchor: [15, 30]
+                        });
+                        userMarker = L.marker(userLatLng, { icon: userIcon }).addTo(map).bindPopup('<b>Ubicación en ' + localData.nombre + '</b>');
+                        recalculateDistances();
+                    } else {
+                        locText.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i> No se encontró la dirección. Probá agregar la localidad (ej: "San Martín 500, Quilmes")';
+                    }
+                }
+            } catch (err) {
+                console.error(err);
+                locText.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Error al buscar';
+            }
+            document.getElementById('loader').style.display = 'none';
+        }
+
+        async function findClosestByPartialMatch(query) {
+            const baseQuery = query.toLowerCase().split(',')[0].trim();
+
+            for (const prof of profesionalesData) {
+                if (prof.direccion.toLowerCase().includes(baseQuery) || prof.localidad.toLowerCase().includes(baseQuery)) {
+                    try {
+                        const data = await geocodeWithRetry(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(prof.fullAddress)}&countrycodes=ar&limit=1`);
+                        if (data.length > 0) {
+                            userLatLng = L.latLng(parseFloat(data[0].lat), parseFloat(data[0].lon));
+                            document.getElementById('currentLocText').innerHTML = `<i class="fa-solid fa-location-dot"></i> Cercano a ${prof.direccion}, ${prof.localidad}`;
+
+                            if (userMarker) map.removeLayer(userMarker);
+                            const userIcon = L.divIcon({
+                                html: '<i class="fa-solid fa-street-view fa-2x" style="color:#e74c3c;"></i>',
+                                className: 'user-icon',
+                                iconSize: [30, 30],
+                                iconAnchor: [15, 30]
+                            });
+                            userMarker = L.marker(userLatLng, { icon: userIcon }).addTo(map).bindPopup('<b>Tu ubicación aproximada</b>');
+
+                            recalculateDistances();
+                            return;
+                        }
+                    } catch (e) { }
+                }
+            }
+
+            document.getElementById('currentLocText').innerHTML = '<i class="fa-solid fa-circle-exclamation"></i> No se encontró ubicación';
+        }
+
+        function recalculateDistances() {
+            if (!userLatLng || !map || !markersGroup) return;
+
+            const userQuery = document.getElementById('addressInput').value.toLowerCase();
+            const matchedLocalidad = userQuery.includes('ezpeleta') ? 'Ezpeleta' :
+                userQuery.includes('quilmes') ? 'Quilmes' :
+                    userQuery.includes('berazategui') ? 'Berazategui' :
+                        userQuery.includes('avellaneda') ? 'Avellaneda' : '';
+
+            filteredData = filteredData.map(prof => {
+                let distance = 99999999;
+                if (prof.lat && prof.lng) {
+                    const profLatLng = L.latLng(prof.lat, prof.lng);
+                    distance = userLatLng.distanceTo(profLatLng);
+                }
+                const isSameLocalidad = prof.localidad.toLowerCase() === matchedLocalidad.toLowerCase();
+                return { ...prof, distance, isSameLocalidad };
+            });
+
+            const showCentro = document.getElementById('filterCentro')?.checked ?? true;
+            const showCompartido = document.getElementById('filterCompartido')?.checked ?? true;
+            const showProfesional = document.getElementById('filterProfesional')?.checked ?? true;
+
+            filteredData = filteredData.filter(p => {
+                const tipo = profesionalTypes[p.direccion] || 'profesional';
+                if (tipo === 'centro') return showCentro;
+                if (tipo === 'compartido') return showCompartido;
+                return showProfesional;
+            });
+
+            filteredData.sort((a, b) => {
+                if (a.isSameLocalidad && !b.isSameLocalidad) return -1;
+                if (!a.isSameLocalidad && b.isSameLocalidad) return 1;
+                return a.distance - b.distance;
+            });
+
+            renderList();
+
+            routingLines.forEach(l => map.removeLayer(l));
+            routingLines = [];
+
+            if (userMarker) map.removeLayer(userMarker);
+            const userIcon = L.divIcon({
+                html: '<i class="fa-solid fa-person-rays fa-2x" style="color:#e74c3c;filter:drop-shadow(0 0 3px white);"></i>',
+                className: 'user-icon',
+                iconSize: [30, 30],
+                iconAnchor: [15, 30]
+            });
+            userMarker = L.marker(userLatLng, { icon: userIcon }).addTo(map);
+
+            markersGroup.clearLayers();
+            const professionalsWithCoords = filteredData.filter(p => p.lat && p.lng);
+            professionalsWithCoords.slice(0, 5).forEach((prof, idx) => {
+                const isClosest = idx === 0;
+                const esWAmap = isWhatsApp(prof.telefono);
+                const telHtmlMap = esWAmap
+                    ? `<a href="${whatsappLink(prof.telefono)}" target="_blank" rel="noopener"
+                          style="display:inline-flex;align-items:center;gap:5px;background:#25D366;color:white;padding:3px 8px;border-radius:4px;font-size:12px;font-weight:600;text-decoration:none;margin-top:4px;">
+                          <i class="fa-brands fa-whatsapp"></i> Abrir WhatsApp
+                       </a>`
+                    : `<span style="color:#666;font-size:13px;"><i class="fa-solid fa-phone"></i> ${prof.telefono}</span>`;
+
+                const marker = L.marker([prof.lat, prof.lng], {
+                    icon: L.divIcon({
+                        html: `<div style="background:${isClosest ? '#27ae60' : '#0767A7'};color:white;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:bold;">${idx + 1}</div>`,
+                        className: 'marker-number',
+                        iconSize: [24, 24]
+                    })
+                }).addTo(markersGroup).bindPopup(`
+                    <div style="font-family:'Inter',sans-serif;min-width:200px;">
+                        <h4 style="margin:0 0 5px; color:#0767A7;">${prof.nombre}</h4>
+                        <p style="margin:0 0 4px; font-size:13px; color:#666;">
+                           <i class="fa-solid fa-map-pin"></i> ${prof.direccion}, ${prof.localidad}
+                        </p>
+                        ${telHtmlMap}
+                        <hr style="border:none; border-top:1px solid #eee; margin:8px 0;">
+                        <strong style="color:#27ae60;"><i class="fa-solid fa-route"></i> A ${(prof.distance / 1000).toFixed(1)} km</strong>
+                    </div>
+                `);
+
+                if (isClosest && userLatLng) {
+                    const line = L.polyline([userLatLng, [prof.lat, prof.lng]], {
+                        color: '#27ae60', weight: 3, opacity: 0.7, dashArray: '5, 10'
+                    }).addTo(map);
+                    routingLines.push(line);
+                }
+            });
+
+            if (professionalsWithCoords.length > 0) {
+                const bounds = L.latLngBounds(
+                    [userLatLng.lat, userLatLng.lng],
+                    professionalsWithCoords.map(p => [p.lat, p.lng])
+                );
+                map.fitBounds(bounds, { padding: [50, 50], maxZoom: 13 });
+            }
+        }
+
+        async function geocodeAndShow(prof) {
+            if (!map || !markersGroup) return;
+
+            document.getElementById('loader').style.display = 'block';
+
+            try {
+                let lat = prof.lat;
+                let lng = prof.lng;
+
+                if (!lat || !lng) {
+                    // Construir query precisa: calle número, localidad, Buenos Aires, Argentina
+                    const fullAddr = `${prof.direccion}, ${prof.localidad}, Buenos Aires, Argentina`;
+                    let data = await geocodeWithRetry(
+                        `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&q=${encodeURIComponent(fullAddr)}&countrycodes=ar&limit=3`
+                    );
+
+                    // Fallback: solo calle + localidad sin número
+                    if (data.length === 0) {
+                        const streetNoNum = prof.direccion.replace(/\d+/g, '').trim();
+                        const fallback = `${streetNoNum}, ${prof.localidad}, Buenos Aires, Argentina`;
+                        data = await geocodeWithRetry(
+                            `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&q=${encodeURIComponent(fallback)}&countrycodes=ar&limit=3`
+                        );
+                    }
+
+                    if (data.length > 0) {
+                        lat = parseFloat(data[0].lat);
+                        lng = parseFloat(data[0].lon);
+                    }
+                }
+
+                if (lat && lng) {
+                    markersGroup.clearLayers();
+                    routingLines.forEach(l => map.removeLayer(l));
+                    routingLines = [];
+                    
+                    // Resaltar card activo
+                    activeProfId = prof.nombre + '|' + prof.direccion;
+                    renderList();
+                    
+                    const profDist = userLatLng ? (userLatLng.distanceTo(L.latLng(lat, lng)) / 1000).toFixed(1) : null;
+
+                    const esWApopup = isWhatsApp(prof.telefono);
+                    const telHtmlPopup = esWApopup
+                        ? `<a href="${whatsappLink(prof.telefono)}" target="_blank" rel="noopener"
+                              style="display:inline-flex;align-items:center;gap:5px;background:#25D366;color:white;padding:3px 8px;border-radius:4px;font-size:12px;font-weight:600;text-decoration:none;margin-top:4px;">
+                              <i class="fa-brands fa-whatsapp"></i> Abrir WhatsApp
+                           </a>`
+                        : `<span style="color:#666;"><i class="fa-solid fa-phone"></i> ${prof.telefono}</span>`;
+
+                    const marker = L.marker([lat, lng]).addTo(markersGroup).bindPopup(`
+                        <div style="font-family:'Inter',sans-serif;min-width:190px;">
+                            <h4 style="margin:0 0 5px; color:#0767A7;">${prof.nombre}</h4>
+                            <p style="margin:0 0 4px; font-size:13px; color:#666;">
+                               <i class="fa-solid fa-map-pin"></i> ${prof.direccion}, ${prof.localidad}
+                            </p>
+                            ${telHtmlPopup}
+                            ${profDist ? `<hr style="border:none; border-top:1px solid #eee; margin:8px 0;"><strong style="color:#27ae60;"><i class="fa-solid fa-route"></i> A ${profDist} km</strong>` : ''}
+                        </div>
+                    `).openPopup();
+
+                    if (userLatLng) {
+                        const line = L.polyline([userLatLng, [lat, lng]], {
+                            color: '#27ae60', weight: 3, opacity: 0.7
+                        }).addTo(map);
+                        routingLines.push(line);
+                    }
+
+                    map.flyTo([lat, lng], 16, { duration: 1.5 });
+                }
+            } catch (e) {
+                console.error(e);
+            }
+            document.getElementById('loader').style.display = 'none';
+        }
+
+
+        // ── WhatsApp detector ──────────────────────────────────────────
+        // Regla Argentina: el PRIMER dígito del abonado local determina si es celular o fijo.
+        // Celular (WhatsApp): primer dígito del abonado es 5,6,7,8,9  → ej: 11 5015-7331
+        // Fijo:               primer dígito del abonado es 2,3,4       → ej: 11 4278-9791
+        // También: si contiene "15" explícito → celular.
+        function isWhatsApp(tel) {
+            if (!tel || tel.trim() === '' || tel.trim() === '011') return false;
+            const clean = tel.replace(/[\s\-().+]/g, '');
+            if (clean.length === 0) return false;
+
+            // Presencia explícita de "15" en el número local → celular
+            // Ej: 01115xxxxxxxx, 15xxxxxxxx, 1115xxxxxxxx
+            if (/^(0?11|0?[23]\d)?15\d{7,8}$/.test(clean)) return true;
+            if (/^54[9]?11?15\d+/.test(clean)) return true;
+
+            // Extraer el abonado local: quitar prefijos +54, 54, 0, código de área
+            let local = clean;
+
+            // Quitar prefijo país
+            if (local.startsWith('549')) local = local.slice(3);       // +549 → quitar 549
+            else if (local.startsWith('54')) local = local.slice(2);   // +54  → quitar 54
+            else if (local.startsWith('0')) local = local.slice(1);    // 011  → quitar 0
+
+            // Quitar código de área (2-4 dígitos: 11, 221, 341, 2284…)
+            // Estrategia: si queda >=10 dígitos, el área es los primeros (total-8)
+            if (local.length > 8) {
+                local = local.slice(local.length - 8);
+            }
+
+            if (local.length === 0) return false;
+
+            // Primer dígito del abonado: 5/6/7/8/9 → celular, 2/3/4 → fijo
+            const first = local[0];
+            if ('56789'.includes(first)) return true;
+            if ('234'.includes(first)) return false;
+
+            // Duda: asumir fijo
+            return false;
+        }
+
+        function whatsappLink(tel) {
+            const clean = tel.replace(/[^\d]/g, '');
+            let num = clean;
+            // Normalizar a 549XXXXXXXXXX
+            if (num.startsWith('549')) {
+                // ya ok
+            } else if (num.startsWith('54')) {
+                num = '549' + num.slice(2);
+            } else if (num.startsWith('0')) {
+                num = '549' + num.slice(1);
+            } else if (num.startsWith('15')) {
+                num = '54911' + num.slice(2);
+            } else {
+                num = '549' + num;
+            }
+            return `https://wa.me/${num}`;
+        }
+        // ───────────────────────────────────────────────────────────────
+
+        function filterByLocalidad() {
+            filterByTipo();
+        }
+
+        function filterBySearchInput() {
+            const query = document.getElementById('addressInput').value.trim().toLowerCase();
+            
+            if (query.length < 2) {
+                // Mostrar todos si se borró la búsqueda
+                filteredData = [...profesionalesData];
+                filterByTipo();
+                return;
+            }
+            
+            // Filtrar por nombre O dirección (búsqueda inteligente mientras escribís)
+            filteredData = profesionalesData.filter(p => {
+                const nombreMatch = p.nombre.toLowerCase().includes(query);
+                // Buscar también en la dirección (sin el número para evitar problemas)
+                const dirPartes = p.direccion.toLowerCase().split(' ');
+                const dirMatch = dirPartes.some(pal => pal.length > 3 && query.includes(pal));
+                
+                return nombreMatch || dirMatch;
+            });
+            
+            if (userLatLng) {
+                filteredData = filteredData.map(prof => ({
+                    ...prof,
+                    distance: (prof.lat && prof.lng) ? userLatLng.distanceTo(L.latLng(prof.lat, prof.lng)) : 99999999
+                })).sort((a, b) => a.distance - b.distance);
+            }
+            
+            renderList();
+        }
+
+        function filterByTipo() {
+            const showCentro = document.getElementById('filterCentro')?.checked ?? true;
+            const showCompartido = document.getElementById('filterCompartido')?.checked ?? true;
+            const showProfesional = document.getElementById('filterProfesional')?.checked ?? true;
+            const showWhatsapp = document.getElementById('filterWhatsapp')?.checked ?? true;
+            const showFijo = document.getElementById('filterFijo')?.checked ?? true;
+
+            const loc = document.getElementById('localidadFilter').value;
+            let baseData = loc ? profesionalesData.filter(p => p.localidad === loc) : [...profesionalesData];
+
+            baseData = baseData.filter(p => {
+                const tipo = profesionalTypes[p.direccion] || 'profesional';
+                const esWA = isWhatsApp(p.telefono);
+                // Filtro tipo
+                if (tipo === 'centro' && !showCentro) return false;
+                if (tipo === 'compartido' && !showCompartido) return false;
+                if (tipo === 'profesional' && !showProfesional) return false;
+                // Filtro contacto
+                if (esWA && !showWhatsapp) return false;
+                if (!esWA && !showFijo) return false;
+                return true;
+            });
+
+            if (userLatLng) {
+                filteredData = baseData.map(prof => ({
+                    ...prof,
+                    distance: (prof.lat && prof.lng) ? userLatLng.distanceTo(L.latLng(prof.lat, prof.lng)) : 99999999
+                })).sort((a, b) => a.distance - b.distance);
+            } else {
+                filteredData = baseData;
+            }
+
+            renderList();
+        }
+
+        let favorites = JSON.parse(localStorage.getItem('kine_favorites') || '[]');
+        let selected = JSON.parse(localStorage.getItem('kine_selected') || '[]');
+
+        function saveFavorites() {
+            localStorage.setItem('kine_favorites', JSON.stringify(favorites));
+        }
+
+        function saveSelected() {
+            localStorage.setItem('kine_selected', JSON.stringify(selected));
+        }
+
+        function renderList() {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '';
+
+            filteredData.forEach((prof, idx) => {
+                const card = document.createElement('div');
+                const profId = prof.nombre + '|' + prof.direccion;
+                const isFavorite = favorites.includes(profId);
+                const isSelected = selected.includes(profId);
+                const isActive = profId === activeProfId;
+
+                card.className = 'clinic-card' + (isFavorite ? ' favorite' : '') + (isSelected ? ' selected' : '') + (isActive ? ' active' : '');
+
+                const esWA = isWhatsApp(prof.telefono);
+                // Normalize phone for tel: link (remove all non-digits except +)
+                const cleanPhone = prof.telefono.replace(/[^\d+]/g, '');
+                
+                const telIcon = esWA
+                    ? `<a href="${whatsappLink(prof.telefono)}" target="_blank" rel="noopener"
+                          onclick="event.stopPropagation()"
+                          style="display:inline-flex;align-items:center;gap:5px;background:#25D366;color:white;padding:4px 9px;border-radius:4px;font-size:12px;font-weight:600;text-decoration:none;">
+                          <i class="fa-brands fa-whatsapp"></i> WhatsApp
+                       </a>`
+                    : `<a href="tel:${cleanPhone}" onclick="event.stopPropagation()"
+                          style="display:inline-flex;align-items:center;gap:5px;background:#f0f0f0;color:#555;padding:4px 9px;border-radius:4px;font-size:12px;font-weight:600;text-decoration:none;">
+                          <i class="fa-solid fa-phone"></i> ${prof.telefono}
+                       </a>`;
+
+                const distanceHtml = prof.distance !== undefined
+                    ? `<div class="clinic-distance" style="color:#27ae60;font-weight:bold;"><i class="fa-solid fa-route"></i> ${(prof.distance / 1000).toFixed(1)} km</div>`
+                    : '';
+
+                const rankHtml = idx === 0 && prof.distance !== undefined
+                    ? '<span class="rank-badge">más cercano</span>' : '';
+
+                card.innerHTML = `
+                    <h3 class="clinic-name">${prof.nombre} ${rankHtml}</h3>
+                    <div class="clinic-address"><i class="fa-solid fa-map-pin"></i> ${prof.direccion}, ${prof.localidad}</div>
+                    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px;">
+                        ${distanceHtml}
+                        ${telIcon}
+                    </div>
+                    <div class="action-buttons">
+                        <button class="action-btn star ${isFavorite ? 'active' : ''}" onclick="toggleFavorite('${profId}', event)">
+                            <i class="fa-solid fa-star"></i> ${isFavorite ? 'Favorito' : 'Favorito'}
+                        </button>
+                        <button class="action-btn check ${isSelected ? 'active' : ''}" onclick="toggleSelected('${profId}', event)">
+                            <i class="fa-solid fa-xmark"></i> ${isSelected ? 'Descartado' : 'Descartar'}
+                        </button>
+                    </div>
+                `;
+                card.onclick = () => geocodeAndShow(prof);
+                resultsDiv.appendChild(card);
+            });
+
+            applyBadges();
+        }
+
+        window.toggleFavorite = function (profId, event) {
+            event.stopPropagation();
+            if (favorites.includes(profId)) {
+                favorites = favorites.filter(f => f !== profId);
+            } else {
+                favorites.push(profId);
+            }
+            saveFavorites();
+            updateFavCount();
+            if (favMapMode) {
+                showFavoritesOnMap();
+            } else {
+                renderList();
+            }
+        };
+
+        window.toggleSelected = function (profId, event) {
+            event.stopPropagation();
+            console.log('toggleSelected called:', profId, 'selected:', selected);
+            if (selected.includes(profId)) {
+                selected = selected.filter(s => s !== profId);
+            } else {
+                selected.push(profId);
+            }
+            console.log('after toggle, selected:', selected);
+            saveSelected();
+            renderList();
+        };
+
+
+        // ── Favoritos en mapa ───────────────────────────────────────────
+        let favMapMode = false;
+        let activeProfId = null; // Para destacar el card seleccionado en el panel
+
+        function updateFavCount() {
+            const count = favorites.length;
+            const badge = document.getElementById('favMapCount');
+            if (badge) badge.textContent = count > 0 ? count : '';
+        }
+
+        function toggleFavMap() {
+            favMapMode = !favMapMode;
+            const btn = document.getElementById('favMapBtn');
+            const btnText = document.getElementById('favMapBtnText');
+            if (favMapMode) {
+                btn.classList.add('active');
+                btnText.textContent = 'Volver a todos';
+                showFavoritesOnMap();
+            } else {
+                btn.classList.remove('active');
+                btnText.textContent = 'Ver favoritos en mapa';
+                filterByTipo(); // restaura lista normal
+            }
+        }
+
+        function showFavoritesOnMap() {
+            if (!map || !markersGroup) return;
+
+            const favProfs = profesionalesData.filter(p => {
+                const id = p.nombre + '|' + p.direccion;
+                return favorites.includes(id);
+            });
+
+            // Mostrar solo favoritos en sidebar
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '<div id="print-header"><h2><i class="fa-solid fa-star" style="color:#f6c946;"></i> Mis Favoritos — Kinesiología UP</h2><p id="print-date"></p></div>';
+
+            if (favProfs.length === 0) {
+                resultsDiv.innerHTML += '<div style="padding:20px;text-align:center;color:#888;"><i class="fa-solid fa-star" style="font-size:2rem;color:#ddd;"></i><p>Aún no tenés favoritos.<br>Marcá con ⭐ los profesionales que quieras guardar.</p></div>';
+                return;
+            }
+
+            // Calcular distancias si hay ubicación
+            const withDist = favProfs.map(p => ({
+                ...p,
+                distance: (userLatLng && p.lat && p.lng)
+                    ? userLatLng.distanceTo(L.latLng(p.lat, p.lng))
+                    : undefined
+            }));
+            if (userLatLng) withDist.sort((a, b) => (a.distance || 9e9) - (b.distance || 9e9));
+
+            // Calcular tipos antes de renderizar
+            calculateTypes();
+
+            // Generar versión de impresión (tabla simple)
+            let printHtml = '';
+            printHtml += `<div class="print-total">Total: ${withDist.length} profesionales</div>`;
+            withDist.forEach((prof, idx) => {
+                const tipo = profesionalTypes[prof.direccion] || 'profesional';
+                const label = tipo === 'centro' ? '🏥 Centro' : tipo === 'compartido' ? '🏥 Compartido' : '👤 Profesional';
+                const tel = prof.telefono || '';
+                printHtml += `<div class="clinic-card-print">
+                    <div class="print-row">
+                        <div class="print-name">${prof.nombre}</div>
+                        <div class="print-address">${prof.direccion}, ${prof.localidad}</div>
+                        <div class="print-dist">${prof.distance ? (prof.distance/1000).toFixed(1)+' km' : '-'}</div>
+                        <div class="print-phone">${tel}</div>
+                    </div>
+                    <div class="tipo-badge">${label}</div>
+                </div>`;
+            });
+
+            // Renderizar cards de favoritos (visual normal)
+            withDist.forEach((prof, idx) => {
+                const card = document.createElement('div');
+                const profId = prof.nombre + '|' + prof.direccion;
+                const esWA = isWhatsApp(prof.telefono);
+                const cleanPhone = prof.telefono.replace(/[^\d+]/g, '');
+                const isSelected = selected.includes(profId);
+                
+                const distHtml = prof.distance !== undefined
+                    ? `<span class="clinic-distance" style="color:#27ae60;font-weight:bold;"><i class="fa-solid fa-route"></i> ${(prof.distance / 1000).toFixed(1)} km</span>`
+                    : '';
+                
+                const telIcon = esWA
+                    ? `<a href="${whatsappLink(prof.telefono)}" target="_blank" onclick="event.stopPropagation()">${prof.telefono}</a>`
+                    : `<a href="tel:${cleanPhone}" onclick="event.stopPropagation()">${prof.telefono}</a>`;
+                
+                const tipo = profesionalTypes[prof.direccion] || 'profesional';
+                const label = tipo === 'centro' ? '🏥 Centro' : tipo === 'compartido' ? '🏥 Compartido' : '👤 Profesional';
+                
+                card.className = 'clinic-card favorite' + (isSelected ? ' selected' : '');
+                card.innerHTML = `
+                    <h3 class="clinic-name"><i class="fa-solid fa-star" style="color:#f6c946;font-size:13px;"></i> ${prof.nombre}</h3>
+                    <div class="clinic-address"><i class="fa-solid fa-map-pin"></i> ${prof.direccion}, ${prof.localidad}</div>
+                    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px;">
+                        ${distHtml}${telIcon}
+                    </div>
+                    <div class="action-buttons">
+                        <button class="action-btn star active" onclick="toggleFavorite('${profId}',event)">
+                            <i class="fa-solid fa-star"></i> Quitar favorito
+                        </button>
+                    </div>`;
+                card.onclick = () => geocodeAndShow(prof);
+                resultsDiv.appendChild(card);
+            });
+
+            // Insertar versión de impresión (oculta en pantalla, visible solo al imprimir)
+            const printDiv = document.getElementById('print-content');
+            if (printDiv) {
+                printDiv.innerHTML = printHtml;
+            } else {
+                const div = document.createElement('div');
+                div.id = 'print-content';
+                div.style.display = 'none';
+                div.innerHTML = printHtml;
+                resultsDiv.appendChild(div);
+            }
+
+            // Apply badges for type (Centro/Profesional)
+            applyBadges();
+
+            // Pintar marcadores en mapa con estrella dorada
+            routingLines.forEach(l => map.removeLayer(l));
+            routingLines = [];
+            markersGroup.clearLayers();
+
+            const bounds = [];
+            withDist.forEach((prof, idx) => {
+                if (!prof.lat || !prof.lng) return;
+                const isFirst = idx === 0;
+                const starMarker = L.divIcon({
+                    html: `<div style="
+                        background:${isFirst ? '#f6c946' : '#fff'};
+                        border:2px solid #f6c946;
+                        color:${isFirst ? '#7c4e00' : '#b7791f'};
+                        width:28px;height:28px;border-radius:50%;
+                        display:flex;align-items:center;justify-content:center;
+                        font-size:14px;
+                        box-shadow:0 2px 6px rgba(0,0,0,0.25);">★</div>`,
+                    className: 'marker-number',
+                    iconSize: [28, 28],
+                    iconAnchor: [14, 14]
+                });
+                const esWAm = isWhatsApp(prof.telefono);
+                const telHm = esWAm
+                    ? `<a href="${whatsappLink(prof.telefono)}" target="_blank" rel="noopener"
+                          style="display:inline-flex;align-items:center;gap:5px;background:#25D366;color:white;padding:3px 8px;border-radius:4px;font-size:12px;font-weight:600;text-decoration:none;margin-top:4px;">
+                          <i class="fa-brands fa-whatsapp"></i> Abrir WhatsApp</a>`
+                    : `<span style="color:#666;font-size:13px;"><i class="fa-solid fa-phone"></i> ${prof.telefono}</span>`;
+                const distPop = prof.distance !== undefined
+                    ? `<hr style="border:none;border-top:1px solid #eee;margin:8px 0;"><strong style="color:#27ae60;"><i class="fa-solid fa-route"></i> A ${(prof.distance / 1000).toFixed(1)} km</strong>`
+                    : '';
+
+                L.marker([prof.lat, prof.lng], { icon: starMarker })
+                    .addTo(markersGroup)
+                    .bindPopup(`
+                        <div style="font-family:'Inter',sans-serif;min-width:200px;">
+                            <h4 style="margin:0 0 5px;color:#0767A7;">⭐ ${prof.nombre}</h4>
+                            <p style="margin:0 0 4px;font-size:13px;color:#666;">
+                                <i class="fa-solid fa-map-pin"></i> ${prof.direccion}, ${prof.localidad}
+                            </p>
+                            ${telHm}${distPop}
+                        </div>`);
+
+                bounds.push([prof.lat, prof.lng]);
+
+                // Línea desde usuario al primero
+                if (isFirst && userLatLng) {
+                    const line = L.polyline([userLatLng, [prof.lat, prof.lng]], {
+                        color: '#f6c946', weight: 3, opacity: 0.8, dashArray: '6, 8'
+                    }).addTo(map);
+                    routingLines.push(line);
+                }
+            });
+
+            if (bounds.length > 0) {
+                const allBounds = userLatLng
+                    ? [[userLatLng.lat, userLatLng.lng], ...bounds]
+                    : bounds;
+                map.fitBounds(L.latLngBounds(allBounds), { padding: [50, 50], maxZoom: 14 });
+            }
+        }
+
+        // ── Exportar PDF ─────────────────────────────────────────────────
+        function exportPDF() {
+            if (favorites.length === 0) {
+                alert('No tenés favoritos guardados todavía. Marcá con ⭐ los profesionales que querés exportar.');
+                return;
+            }
+
+            // Asegurarse que la vista de favoritos está activa antes de imprimir
+            const wasInFavMode = favMapMode;
+            if (!favMapMode) {
+                favMapMode = true;
+                showFavoritesOnMap();
+            }
+
+            // Completar header de impresión
+            const printDate = document.getElementById('print-date');
+            if (printDate) {
+                const now = new Date();
+                printDate.textContent = `Generado el ${now.toLocaleDateString('es-AR', { day: '2-digit', month: 'long', year: 'numeric' })} — Kinesiología UP`;
+            }
+
+            setTimeout(() => {
+                window.print();
+                // Restaurar estado si era necesario
+                if (!wasInFavMode) {
+                    favMapMode = false;
+                    const btn = document.getElementById('favMapBtn');
+                    const btnText = document.getElementById('favMapBtnText');
+                    if (btn) btn.classList.remove('active');
+                    if (btnText) btnText.textContent = 'Ver favoritos en mapa';
+                    filterByTipo();
+                }
+            }, 300);
+        }
+
+        // ── Exportar Listado Actual a PDF ───────────────────────────────────
+        function exportListPDF() {
+            // Usar los datos filtrados actualmente (no favoritos)
+            const dataToExport = filteredData.filter(p => !selected.includes(p.nombre + '|' + p.direccion));
+            
+            if (dataToExport.length === 0) {
+                alert('No hay profesionales para exportar.');
+                return;
+            }
+
+            // Calcular tipos
+            calculateTypes();
+
+            // Calcular distancias si hay ubicación
+            let withDist = dataToExport.map(p => ({
+                ...p,
+                distance: (userLatLng && p.lat && p.lng)
+                    ? userLatLng.distanceTo(L.latLng(p.lat, p.lng))
+                    : undefined
+            }));
+            if (userLatLng) withDist.sort((a, b) => (a.distance || 9e9) - (b.distance || 9e9));
+
+            // Generar HTML para impresión
+            const now = new Date();
+            const fecha = now.toLocaleDateString('es-AR', { day: '2-digit', month: 'long', year: 'numeric' });
+            
+            // Obtener criterios de búsqueda
+            const loc = document.getElementById('localidadFilter').value;
+            const criterios = loc ? 'Localidad: ' + loc : 'Todas las localidades';
+            
+            let printHtml = `<div class="print-title">Resultados de búsqueda de: Kinesiología UP</div>
+            <div class="print-date">${fecha}</div>
+            <div class="print-criteria"><b>Filtros:</b> ${criterios}</div>
+            <div class="print-total">Total: ${withDist.length} profesionales</div>`;
+            
+            withDist.forEach(prof => {
+                const tipo = profesionalTypes[prof.direccion] || 'profesional';
+                const label = tipo === 'centro' ? '🏥 Centro' : tipo === 'compartido' ? '🏥 Compartido' : '👤 Profesional';
+                const tel = prof.telefono || '';
+                const esWA = isWhatsApp(prof.telefono);
+                const telLink = esWA ? `WhatsApp: ${tel}` : tel;
+                
+                printHtml += `<div class="clinic-card-print">
+                    <div class="print-row">
+                        <div class="print-name">${prof.nombre}</div>
+                        <div class="print-address">${prof.direccion}, ${prof.localidad}</div>
+                        <div class="print-dist">${prof.distance ? (prof.distance/1000).toFixed(1)+' km' : '-'}</div>
+                        <div class="print-phone">${telLink}</div>
+                    </div>
+                    <div class="tipo-badge">${label}</div>
+                </div>`;
+            });
+
+            // Insertar en DOM
+            let printDiv = document.getElementById('print-content');
+            if (!printDiv) {
+                printDiv = document.createElement('div');
+                printDiv.id = 'print-content';
+                document.getElementById('results').appendChild(printDiv);
+            }
+            
+            printDiv.innerHTML = printHtml;
+
+            // Imprimir
+            setTimeout(() => {
+                window.print();
+                // Limpiar
+                printDiv.innerHTML = '';
+            }, 300);
+        }
+        // ─────────────────────────────────────────────────────────────────
+
+        document.addEventListener('DOMContentLoaded', loadData);
+    </script>
+</body>
+
+</html>

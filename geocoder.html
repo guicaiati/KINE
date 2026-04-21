@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Geocoder Inteligente</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        h2 {
+            margin-bottom: 10px;
+        }
+
+        input,
+        button {
+            padding: 10px;
+            margin: 5px 0;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        #log {
+            background: #111;
+            color: #0f0;
+            padding: 10px;
+            height: 250px;
+            overflow: auto;
+            font-size: 12px;
+        }
+
+        #progressBar {
+            width: 100%;
+            background: #ddd;
+            height: 20px;
+            margin-top: 10px;
+        }
+
+        #progress {
+            height: 100%;
+            width: 0%;
+            background: #4caf50;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2>Geocodificador de Direcciones</h2>
+
+    <input type="file" id="fileInput">
+    <br>
+
+    <button onclick="procesar()">Procesar JSON</button>
+    <button onclick="descargar()">Descargar resultado</button>
+
+    <div id="progressBar">
+        <div id="progress"></div>
+    </div>
+
+    <pre id="log"></pre>
+
+    <script>
+        let data;
+        let cache = {};
+
+        function log(msg) {
+            const el = document.getElementById("log");
+            el.textContent += msg + "\n";
+            el.scrollTop = el.scrollHeight;
+        }
+
+        function limpiarDireccion(dir, loc) {
+            return `${dir}, ${loc}, Buenos Aires, Argentina`;
+        }
+
+        async function geocode(query, apiKey) {
+            const url = `https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(query)}&key=${apiKey}`;
+
+            const res = await fetch(url);
+            const json = await res.json();
+
+            if (json.results.length > 0) {
+                return {
+                    lat: json.results[0].geometry.lat,
+                    lng: json.results[0].geometry.lng
+                };
+            }
+            return null;
+        }
+
+        async function procesar() {
+            const file = document.getElementById("fileInput").files[0];
+            // API Key hardcodeada - cambiala aquí
+            //https://opencagedata.com/dashboard#geocoding
+            const apiKey = "0d614fb6636a4876bd7d8f5972a89c61";
+
+            if (!file) {
+                alert("Subí el JSON");
+                return;
+            }
+
+            document.getElementById("log").textContent = "";
+            cache = {};
+
+            const text = await file.text();
+            data = JSON.parse(text);
+
+            // contar total
+            let total = 0;
+            data.localidades.forEach(l => total += l.profesionales.length);
+
+            let procesados = 0;
+
+            for (const loc of data.localidades) {
+                for (const prof of loc.profesionales) {
+
+                    const key = prof.direccion.toLowerCase().trim();
+
+                    if (cache[key]) {
+                        prof.lat = cache[key].lat;
+                        prof.lng = cache[key].lng;
+                        log(`CACHE → ${prof.direccion}`);
+                    } else {
+
+                        const direccion = limpiarDireccion(prof.direccion, loc.nombre);
+                        log(`Buscando: ${direccion}`);
+
+                        try {
+                            const coords = await geocode(direccion, apiKey);
+
+                            if (coords) {
+                                prof.lat = coords.lat;
+                                prof.lng = coords.lng;
+                                cache[key] = coords;
+
+                                log(`OK → ${coords.lat}, ${coords.lng}`);
+                            } else {
+                                log("NO ENCONTRADO");
+                            }
+
+                        } catch (e) {
+                            log("ERROR");
+                        }
+
+                        // rate limit
+                        await new Promise(r => setTimeout(r, 1000));
+                    }
+
+                    procesados++;
+
+                    // actualizar barra
+                    const porcentaje = (procesados / total) * 100;
+                    document.getElementById("progress").style.width = porcentaje + "%";
+                }
+            }
+
+            log("✔ PROCESO COMPLETADO");
+        }
+
+        function descargar() {
+            if (!data) {
+                alert("Primero procesá el JSON");
+                return;
+            }
+
+            const blob = new Blob(
+                [JSON.stringify(data, null, 2)],
+                { type: "application/json" }
+            );
+
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "centros_geocodificados.json";
+            a.click();
+        }
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,639 @@
+{
+  "especialidad": "Kinesiologia",
+  "localidades": [
+    {
+      "nombre": "Berazategui",
+      "profesionales": [
+        {
+          "nombre": "AIMONE JUAN MANUEL",
+          "direccion": "Calle 13 1400",
+          "telefono": "011",
+          "lat": -34.7679616,
+          "lng": -58.2241205
+        },
+        {
+          "nombre": "ALVAREZ LAURA EDITH",
+          "direccion": "Calle 11 4930",
+          "telefono": "+54 11 42567450",
+          "lat": -34.7652107,
+          "lng": -58.2238793
+        },
+        {
+          "nombre": "ARCE ADRIANA DEL ROSARIO",
+          "direccion": "Calle 25 1350",
+          "telefono": "+54 11 42232993",
+          "lat": -34.7926682,
+          "lng": -58.2391794
+        },
+        {
+          "nombre": "BELLONI ANSELMO DANIEL",
+          "direccion": "Pueyrredon 1435",
+          "telefono": "+54 11 42564765",
+          "lat": -34.76531,
+          "lng": -58.21278
+        },
+        {
+          "nombre": "BERUTTI MIGUEL",
+          "direccion": "Calle 117 1340",
+          "telefono": "+54 11 42614140",
+          "lat": -34.7729859,
+          "lng": -58.2453576
+        },
+        {
+          "nombre": "BRUNO DAVID EMILIO",
+          "direccion": "Av. Fangio 1500",
+          "telefono": "+54 11 1550157331",
+          "lat": -34.7599715,
+          "lng": -58.1968899
+        },
+        {
+          "nombre": "CAVALLINI LUIS GASTON",
+          "direccion": "Calle 161 6050",
+          "telefono": "+54 11 42152198",
+          "lat": -34.7634608,
+          "lng": -58.1883053
+        },
+        {
+          "nombre": "CORREA MARIA FERNANDA",
+          "direccion": "Calle 150 800",
+          "telefono": "+54 11 42166060",
+          "lat": -34.7566252,
+          "lng": -58.2102561
+        },
+        {
+          "nombre": "COSTANZO FERNANDO ARIEL",
+          "direccion": "Mitre 2218",
+          "telefono": "+54 11 1559942586",
+          "lat": -34.7538036,
+          "lng": -58.21287
+        },
+        {
+          "nombre": "FALCONE CECILIA MARIEL",
+          "direccion": "Calle 148 1200",
+          "telefono": "+54 11 58391119",
+          "lat": -34.7592516,
+          "lng": -58.2112378
+        },
+        {
+          "nombre": "FERRANDEZ MARIA PAULA",
+          "direccion": "Calle 10 733",
+          "telefono": "+54 11 20005107",
+          "lat": -34.776756,
+          "lng": -58.2486577
+        },
+        {
+          "nombre": "GOMEZ GUSTAVO NORBERTO",
+          "direccion": "Mitre 1800",
+          "telefono": "+54 11 22028400",
+          "lat": -34.7508822,
+          "lng": -58.2188296
+        },
+        {
+          "nombre": "GRIMALDI GABRIEL VICTOR",
+          "direccion": "Calle 145 2300",
+          "telefono": "+54 11 42267075",
+          "lat": -34.7666973,
+          "lng": -58.2096865
+        },
+        {
+          "nombre": "LOPEZ SERGIO FERNANDO",
+          "direccion": "Av. Vergara 2500",
+          "telefono": "+54 11 32467677",
+          "lat": -34.7866401,
+          "lng": -58.2201733
+        },
+        {
+          "nombre": "MELION MARIA ROSA",
+          "direccion": "Calle 148 1000",
+          "telefono": "+54 11 42165800",
+          "lat": -34.7592516,
+          "lng": -58.2112378
+        },
+        {
+          "nombre": "OTTAVIANO CRISTINA",
+          "direccion": "Calle 15 5125",
+          "telefono": "+54 11 42561693",
+          "lat": -34.7802915,
+          "lng": -58.2414941
+        },
+        {
+          "nombre": "RAMOS EDGARDO NORBERTO",
+          "direccion": "Calle 11 4537",
+          "telefono": "+54 11 42164737",
+          "lat": -34.7652107,
+          "lng": -58.2238793
+        },
+        {
+          "nombre": "SILVA LAURA BEATRIZ",
+          "direccion": "Calle 148 1000",
+          "telefono": "+54 11 42165800",
+          "lat": -34.7592516,
+          "lng": -58.2112378
+        },
+        {
+          "nombre": "VERA CARLOS ALBERTO",
+          "direccion": "Calle 149 1435",
+          "telefono": "+54 11 42564765",
+          "lat": -34.7586203,
+          "lng": -58.210009
+        }
+      ]
+    },
+    {
+      "nombre": "Quilmes",
+      "profesionales": [
+        {
+          "nombre": "AIMONE JUAN MANUEL",
+          "direccion": "9 de Julio 110",
+          "telefono": "+54 11 43505900",
+          "lat": -34.7204865,
+          "lng": -58.2607337
+        },
+        {
+          "nombre": "ALBONICO SILVIA",
+          "direccion": "Hipolito Yrigoyen 730",
+          "telefono": "+54 11 42537793",
+          "lat": -34.7254892,
+          "lng": -58.2586366
+        },
+        {
+          "nombre": "ALONSO ELISABETH",
+          "direccion": "Lavalle 408",
+          "telefono": "+54 11 43507341",
+          "lat": -34.7191109,
+          "lng": -58.2593362
+        },
+        {
+          "nombre": "ANTINORI MARINA",
+          "direccion": "Gral. Paz 631",
+          "telefono": "+54 11 42576921",
+          "lat": -34.72418,
+          "lng": -58.25265
+        },
+        {
+          "nombre": "BALVERDI FEDRA GABRIELA",
+          "direccion": "Colon 136",
+          "telefono": "+54 11 42531754",
+          "lat": -34.7195552,
+          "lng": -58.2609352
+        },
+        {
+          "nombre": "CASTILLO PATRICIA HAYDEE",
+          "direccion": "San Martin 330",
+          "telefono": "+54 11 42167520",
+          "lat": -34.7186028,
+          "lng": -58.2623018
+        },
+        {
+          "nombre": "CERLON PABLO AUGUSTO",
+          "direccion": "Alvear 865",
+          "telefono": "+54 11 42543875",
+          "lat": -34.7253894,
+          "lng": -58.2524364
+        },
+        {
+          "nombre": "DI FAZIO LAURA ANDREA",
+          "direccion": "Urquiza 1537",
+          "telefono": "+54 11 42571212",
+          "lat": -34.7318407,
+          "lng": -58.2700791
+        },
+        {
+          "nombre": "GARCIA EMILIANO IGNACIO",
+          "direccion": "Corrientes 1271",
+          "telefono": "+54 11 42574414",
+          "lat": -34.7313206,
+          "lng": -58.2724674
+        },
+        {
+          "nombre": "IGLESIAS HORACIO ANTONIO",
+          "direccion": "Olavarria 241",
+          "telefono": "+54 11 42530211",
+          "lat": -34.724941,
+          "lng": -58.2542603
+        },
+        {
+          "nombre": "LLAMAZAREZ JUAN PEDRO",
+          "direccion": "Derqui 720",
+          "telefono": "+54 11 42537208",
+          "lat": -34.7187842,
+          "lng": -58.2459367
+        },
+        {
+          "nombre": "MADEO ROSSANA BEATRIZ",
+          "direccion": "12 de Octubre 575",
+          "telefono": "+54 11 42531217",
+          "lat": -34.7297358,
+          "lng": -58.2642866
+        },
+        {
+          "nombre": "ORSI PAOLA GABRIELA",
+          "direccion": "9 de Julio 110",
+          "telefono": "+54 11 42240911",
+          "lat": -34.7204865,
+          "lng": -58.2607337
+        },
+        {
+          "nombre": "QUIROZ MONICA PATRICIA",
+          "direccion": "Brandsen 282",
+          "telefono": "+54 11 42540800",
+          "lat": -34.7259969,
+          "lng": -58.2523939
+        },
+        {
+          "nombre": "ROMERO SERGIO ABELARDO",
+          "direccion": "San Martin 311",
+          "telefono": "+54 11 42544717",
+          "lat": -34.7182457,
+          "lng": -58.2628043
+        },
+        {
+          "nombre": "VALERA GRACIELA BEATRIZ",
+          "direccion": "Gaboto 464",
+          "telefono": "+54 11 42546372",
+          "lat": -34.7227211,
+          "lng": -58.2619267
+        }
+      ]
+    },
+    {
+      "nombre": "Avellaneda",
+      "profesionales": [
+        {
+          "nombre": "CHAGAS MARIELA KARINA",
+          "direccion": "Suarez 208",
+          "telefono": "+54 11 1532754822",
+          "lat": -34.6648487,
+          "lng": -58.3551242
+        },
+        {
+          "nombre": "CIKA",
+          "direccion": "Av. Bartolome Mitre 175",
+          "telefono": "+54 11 20687952",
+          "lat": -34.6583166,
+          "lng": -58.3712639
+        },
+        {
+          "nombre": "SALEH CARMEN",
+          "direccion": "Av. Belgrano 908",
+          "telefono": "+54 11 42229014",
+          "lat": -34.6668873,
+          "lng": -58.3646427
+        }
+      ]
+    },
+    {
+      "nombre": "Ezpeleta",
+      "profesionales": [
+        {
+          "nombre": "FODOR RODRIGO",
+          "direccion": "Av. Mitre 4250",
+          "telefono": "+54 11 42787756",
+          "lat": -34.744013,
+          "lng": -58.2296837
+        },
+        {
+          "nombre": "MASSANTI LORENA CRISTINA",
+          "direccion": "Antartida Argentina 1275",
+          "telefono": "+54 11 42789791",
+          "lat": -34.742195,
+          "lng": -58.2395817
+        },
+        {
+          "nombre": "PETRALIA EZEQUIEL HILARIO",
+          "direccion": "Av. Smith 1200",
+          "telefono": "+54 11 24913162",
+          "lat": -34.7437496,
+          "lng": -58.2459663
+        }
+      ]
+    },
+    {
+      "nombre": "Quilmes Oeste",
+      "profesionales": [
+        {
+          "nombre": "BENAVIDEZ LEANDRO JAVIER",
+          "direccion": "Blas Parera s/n",
+          "telefono": "011",
+          "lat": -34.61315,
+          "lng": -58.37723
+        },
+        {
+          "nombre": "BENITEZ JULIA ELENA",
+          "direccion": "Costa Rica s/n",
+          "telefono": "+54 11 1559298324",
+          "lat": -34.7669555,
+          "lng": -58.2626114
+        },
+        {
+          "nombre": "BOZZONI LUISINA",
+          "direccion": "9 de Julio y San Martin",
+          "telefono": "+54 11 43505900",
+          "lat": -34.61315,
+          "lng": -58.37723
+        },
+        {
+          "nombre": "BOZZONI LUISINA",
+          "direccion": "Bernardo de Irigoyen s/n",
+          "telefono": "+54 11 21155191",
+          "lat": -34.61315,
+          "lng": -58.37723
+        },
+        {
+          "nombre": "CAPLINSKYJ DAIANA MAGALI",
+          "direccion": "Moreno s/n",
+          "telefono": "+54 11 42537319",
+          "lat": -34.61315,
+          "lng": -58.37723
+        },
+        {
+          "nombre": "CAVALLINI LUIS GASTON",
+          "direccion": "Lavalle 678, 6to Piso, Dpto D",
+          "telefono": "+54 11 42246890",
+          "lat": -34.61315,
+          "lng": -58.37723
+        },
+        {
+          "nombre": "CORIA ALEJANDRA MARIELA",
+          "direccion": "Republica del Libano s/n",
+          "telefono": "+54 11 40931034",
+          "lat": -34.7351109,
+          "lng": -58.3032231
+        },
+        {
+          "nombre": "DI NOTO DIEGO GUILLERMO",
+          "direccion": "Vicente Lopez 1691 esq. 1 de Mayo",
+          "telefono": "+54 11 45798480",
+          "lat": -34.61315,
+          "lng": -58.37723
+        },
+        {
+          "nombre": "DI PIERRO PABLO",
+          "direccion": "Alsina s/n",
+          "telefono": "+54 11 63081813",
+          "lat": -34.61315,
+          "lng": -58.37723
+        },
+        {
+          "nombre": "DIAZ HOMERO GERMAN",
+          "direccion": "Guiad y Paz s/n",
+          "telefono": "011",
+          "lat": -34.61315,
+          "lng": -58.37723
+        },
+        {
+          "nombre": "FILOSA IGNACIO GERMAN",
+          "direccion": "Mitre s/n",
+          "telefono": "+54 11 58462001",
+          "lat": -34.7087998,
+          "lng": -58.3121566
+        },
+        {
+          "nombre": "GARIBOTTI AYELEN MAILEN",
+          "direccion": "Jujuy s/n",
+          "telefono": "+54 11 57322139",
+          "lat": -34.7323237,
+          "lng": -58.3043697
+        },
+        {
+          "nombre": "GIMENEZ GERMAN DANIEL",
+          "direccion": "Brandsen s/n",
+          "telefono": "+54 11 20800912",
+          "lat": -34.61315,
+          "lng": -58.37723
+        },
+        {
+          "nombre": "GINZBURG SERGIO ARIEL",
+          "direccion": "Republica del Libano s/n",
+          "telefono": "+54 11 425413645",
+          "lat": -34.7351109,
+          "lng": -58.3032231
+        },
+        {
+          "nombre": "GONZALEZ NATALIA ANDREA",
+          "direccion": "Alsina s/n",
+          "telefono": "+54 11 50538310",
+          "lat": -34.61315,
+          "lng": -58.37723
+        },
+        {
+          "nombre": "GUITERA MARISA CECILIA",
+          "direccion": "9 de Julio s/n",
+          "telefono": "+54 11 42440911",
+          "lat": -34.7204155,
+          "lng": -58.294603
+        },
+        {
+          "nombre": "HENKE CAROLINA ALEJANDRA",
+          "direccion": "Av. 12 de Octubre s/n",
+          "telefono": "+54 11 33617453",
+          "lat": -34.7477649,
+          "lng": -58.3001653
+        },
+        {
+          "nombre": "HERNAIZ MARTIN",
+          "direccion": "Pringles s/n",
+          "telefono": "+54 11 1521772402",
+          "lat": -34.61315,
+          "lng": -58.37723
+        },
+        {
+          "nombre": "IGLESIAS MARINA GABRIELA",
+          "direccion": "1° de Mayo s/n",
+          "telefono": "+54 11 42806966",
+          "lat": -34.7446285,
+          "lng": -58.2810513
+        },
+        {
+          "nombre": "IGLESIAS MARINA GABRIELA",
+          "direccion": "Corrientes s/n",
+          "telefono": "+54 11 42574414",
+          "lat": -34.7451296,
+          "lng": -58.2996711
+        },
+        {
+          "nombre": "IGLESIAS MARINA GABRIELA",
+          "direccion": "Hipolito Irigoyen s/n",
+          "telefono": "011",
+          "lat": -34.61315,
+          "lng": -58.37723
+        },
+        {
+          "nombre": "KOWALSKI CRISTINA",
+          "direccion": "C. Pellegrini 431",
+          "telefono": "+54 11 43650766",
+          "lat": -34.61315,
+          "lng": -58.37723
+        },
+        {
+          "nombre": "LISSA MIRIAM BEATRIZ",
+          "direccion": "San Mauro Castelverde s/n",
+          "telefono": "+54 11 4253907",
+          "lat": -34.7483633,
+          "lng": -58.2975762
+        },
+        {
+          "nombre": "LOPEZ IGNACIO YAGO",
+          "direccion": "Av. Hipolito Yrigoyen s/n",
+          "telefono": "+54 11 75302000",
+          "lat": -34.61315,
+          "lng": -58.37723
+        },
+        {
+          "nombre": "MAIORANA LILIANA NOEMI",
+          "direccion": "Vte. Lopez 904",
+          "telefono": "+54 11 42546372",
+          "lat": -34.61315,
+          "lng": -58.37723
+        },
+        {
+          "nombre": "MANCINI GISELA",
+          "direccion": "Corrientes 1271",
+          "telefono": "+54 11 42574414",
+          "lat": -34.7313206,
+          "lng": -58.2724674
+        },
+        {
+          "nombre": "MANCINI GISELA",
+          "direccion": "Bernardo de Irigoyen s/n",
+          "telefono": "+54 11 39762649",
+          "lat": -34.61315,
+          "lng": -58.37723
+        },
+        {
+          "nombre": "MANSILLA SERGIO OMAR",
+          "direccion": "Triunvirato 1201",
+          "telefono": "+54 11 42539109",
+          "lat": -34.7470391,
+          "lng": -58.2792452
+        },
+        {
+          "nombre": "MONTENEGRO MARIA DE LAS MERCEDES",
+          "direccion": "Carlos Pellegrini 490",
+          "telefono": "011",
+          "lat": -34.7445254,
+          "lng": -58.3032031
+        },
+        {
+          "nombre": "NAVARRO CARLOS CESAR",
+          "direccion": "Andres Baranda s/n",
+          "telefono": "011",
+          "lat": -34.61315,
+          "lng": -58.37723
+        },
+        {
+          "nombre": "OESCHGER MAXIMILIANO JUAN",
+          "direccion": "Vicente Lopez s/n",
+          "telefono": "+54 11 43507400",
+          "lat": -34.61315,
+          "lng": -58.37723
+        },
+        {
+          "nombre": "PALLERO MARIA CELESTE",
+          "direccion": "Brandsen s/n",
+          "telefono": "011",
+          "lat": -34.61315,
+          "lng": -58.37723
+        },
+        {
+          "nombre": "PANE MARIANO DAMIAN",
+          "direccion": "Republica del Libano 2628",
+          "telefono": "+54 11 50650300",
+          "lat": -34.7300123,
+          "lng": -58.2924675
+        },
+        {
+          "nombre": "PETRONE MAURICIO AGUSTIN",
+          "direccion": "Andres Baranda 282",
+          "telefono": "011",
+          "lat": -34.61315,
+          "lng": -58.37723
+        },
+        {
+          "nombre": "PISANO PAULA DANIELA",
+          "direccion": "Colon s/n",
+          "telefono": "011",
+          "lat": -34.7564179,
+          "lng": -58.2811544
+        },
+        {
+          "nombre": "PREISZ RAUL EXEQUIEL",
+          "direccion": "Urquiza s/n",
+          "telefono": "+54 3446 15595360",
+          "lat": -34.7430086,
+          "lng": -58.2615834
+        },
+        {
+          "nombre": "PROCOPIO BARBARA EMIR",
+          "direccion": "Velez Sarsfield s/n",
+          "telefono": "+54 11 45570957",
+          "lat": -34.61315,
+          "lng": -58.37723
+        },
+        {
+          "nombre": "RAMOS EDGARDO NORBERTO",
+          "direccion": "San Mauro Castelverde s/n",
+          "telefono": "+54 11 42539087",
+          "lat": -34.7483633,
+          "lng": -58.2975762
+        },
+        {
+          "nombre": "RICAGNO FLORENCIA",
+          "direccion": "Alsina s/n",
+          "telefono": "011",
+          "lat": -34.61315,
+          "lng": -58.37723
+        },
+        {
+          "nombre": "SAVEIKA VERONICA PATRICIA GISELE",
+          "direccion": "Profesor Maier 4658",
+          "telefono": "011",
+          "lat": -34.7691534,
+          "lng": -58.2805583
+        },
+        {
+          "nombre": "SOSA CESAR JAVIER",
+          "direccion": "Av. Lamadrid s/n",
+          "telefono": "+54 11 24051881",
+          "lat": -34.72595,
+          "lng": -58.2936876
+        },
+        {
+          "nombre": "STANGALINI FABIAN JOSE",
+          "direccion": "Rodolfo Lopez 157",
+          "telefono": "+54 11 42541097",
+          "lat": -34.7326865,
+          "lng": -58.2887228
+        },
+        {
+          "nombre": "TAGLIAFERRI MARIA CRISTINA ALEJANDRA",
+          "direccion": "9 de Julio s/n",
+          "telefono": "+54 11 42240911",
+          "lat": -34.7204155,
+          "lng": -58.294603
+        },
+        {
+          "nombre": "VERON RAMON OMAR",
+          "direccion": "Pte. Peron s/n",
+          "telefono": "+54 11 42544949",
+          "lat": -34.61315,
+          "lng": -58.37723
+        },
+        {
+          "nombre": "VILLAMONTE MIGUEL ANGEL",
+          "direccion": "Andres Baranda 282",
+          "telefono": "+54 11 42574514",
+          "lat": -34.61315,
+          "lng": -58.37723
+        },
+        {
+          "nombre": "VILLANI SILVINA MARIA",
+          "direccion": "Triunvirato s/n",
+          "telefono": "+54 11 22546265",
+          "lat": -34.7470391,
+          "lng": -58.2792452
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+@media print {
+    body { font-family: Arial; font-size: 9pt; margin: 10px; }
+    #map, .header, .filter-bar, .loader, #favMapBtn, #exportPdfBtn, #exportListPdfBtn, .action-buttons, #print-header, button { display: none !important; }
+    
+    /* Ocultar contenido original */
+    .clinic-card { display: none !important; }
+    
+    /* Mostrar versión de tabla */
+    #print-content { display: block !important; margin-top: 10px; }
+    
+    .clinic-card-print { 
+        border-bottom: 1px solid #ccc;
+        padding: 2px 0;
+    }
+    
+    /* Tabla */
+    .print-row { 
+        display: table; 
+        width: 100%; 
+        table-layout: fixed; 
+        border-collapse: collapse;
+    }
+    .print-name { display: table-cell; width: 25%; padding: 2px 5px; font-weight: bold; }
+    .print-address { display: table-cell; width: 40%; padding: 2px 5px; }
+    .print-dist { display: table-cell; width: 10%; padding: 2px 5px; text-align: center; }
+    .print-phone { display: table-cell; width: 25%; padding: 2px 5px; text-align: right; }
+    
+    .print-total { font-weight: bold; margin: 10px 0; padding: 5px 0; border-bottom: 2px solid #000; }
+    .print-title { font-size: 14pt; font-weight: bold; margin-bottom: 5px; }
+    .print-date { font-size: 10pt; color: #666; margin-bottom: 15px; }
+    .print-criteria { font-size: 9pt; color: #444; margin-bottom: 15px; padding: 5px; background: #f5f5f5; border-radius: 4px; }
+    .tipo-badge { display: block; font-size: 7pt; color: #666; margin-top: 1px; }
+}
